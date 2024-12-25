@@ -1,0 +1,20 @@
+[package]
+name = "rir"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+rbx_binary = "0.7.7"
+rbx_dom_weak = "2.9"
+rbx_xml = "0.13.5"
+roblox_install = "1.0"
+
+regex = "1.11"
+clap = { version = "4.5", features = ["derive"] }
+
+tiny_http = "0.12.0"
+
+thiserror = "2.0"
+env_logger = "0.11.6"
+log = "0.4.22"
