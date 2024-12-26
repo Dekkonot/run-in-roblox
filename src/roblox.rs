@@ -14,7 +14,7 @@ use crate::{Error, Result};
 static ROBLOX_INSTALL: LazyLock<RobloxStudio> =
     LazyLock::new(|| RobloxStudio::locate().expect("roblox studio should be installed"));
 
-const PLUGIN_NAME: &str = "run-in-roblox.luau";
+const PLUGIN_NAME: &str = "run-in-roblox.rbxm";
 
 pub fn install_plugin(plugin_src: &[u8]) -> Result<()> {
     let plugin_folder = ROBLOX_INSTALL.plugins_path();
