@@ -2,7 +2,8 @@ use std::{num::NonZeroU16, path::PathBuf, str::FromStr};
 
 use clap::{builder::PossibleValue, ColorChoice, Parser, ValueEnum};
 use env_logger::fmt;
-use thiserror::Error;
+
+use crate::Error;
 
 #[derive(Debug, Parser)]
 pub struct CliOptions {
@@ -36,13 +37,13 @@ pub enum ScriptKind {
 }
 
 impl FromStr for ScriptKind {
-    type Err = CliError;
+    type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "server" => Ok(Self::Server),
             "client" => Ok(Self::Client),
             "plugin" => Ok(Self::Plugin),
-            _ => Err(CliError::UnknownScriptType),
+            _ => Err(Self::Err::UnknownScriptType),
         }
     }
 }
@@ -59,12 +60,6 @@ impl ValueEnum for ScriptKind {
             Self::Client => PossibleValue::new("client"),
         })
     }
-}
-
-#[derive(Debug, Error)]
-pub enum CliError {
-    #[error("unknown script type provided. valid values: plugin, server, client")]
-    UnknownScriptType,
 }
 
 pub fn color_to_write_style(color: ColorChoice) -> fmt::WriteStyle {
