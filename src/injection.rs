@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{fmt::Write, path::Path};
 
 use rbx_dom_weak::{
     types::{Attributes, Enum, Variant},
@@ -41,5 +41,6 @@ pub fn bundle_plugin(path_to_script: &Path, port: u16, id: Uuid) -> Result<()> {
 }
 
 fn script_to_module(script: &mut String) {
-    script.push_str("return function() end")
+    let source = std::mem::take(script);
+    write!(script, "return function() {source} end").unwrap()
 }
