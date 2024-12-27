@@ -31,10 +31,31 @@ pub fn process_requests(server: Server, server_id: Uuid) -> Result<Vec<(MessageT
                     None,
                 ))?;
             }
+            (Method::Post, "/info") => {
+                let mut text = String::with_capacity(request.body_length().unwrap_or(0));
+                request.as_reader().read_to_string(&mut text)?;
+                result.push((MessageType::Info, text));
+
+                request.respond(Response::empty(200))?;
+            }
             (Method::Post, "/output") => {
                 let mut text = String::with_capacity(request.body_length().unwrap_or(0));
                 request.as_reader().read_to_string(&mut text)?;
                 result.push((MessageType::Output, text));
+
+                request.respond(Response::empty(200))?;
+            }
+            (Method::Post, "/warn") => {
+                let mut text = String::with_capacity(request.body_length().unwrap_or(0));
+                request.as_reader().read_to_string(&mut text)?;
+                result.push((MessageType::Warn, text));
+
+                request.respond(Response::empty(200))?;
+            }
+            (Method::Post, "/error") => {
+                let mut text = String::with_capacity(request.body_length().unwrap_or(0));
+                request.as_reader().read_to_string(&mut text)?;
+                result.push((MessageType::Error, text));
 
                 request.respond(Response::empty(200))?;
             }
