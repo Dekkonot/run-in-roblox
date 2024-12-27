@@ -16,7 +16,7 @@ pub fn process_requests(server: Server, server_id: Uuid) -> Result<Vec<(MessageT
     loop {
         // TODO: Add threadpool, and a timeout
         let mut request = server.recv()?;
-        log::warn!("request: {} {}", request.method(), request.url());
+        log::debug!("request: {} {}", request.method(), request.url());
         match (request.method(), request.url()) {
             (Method::Get, "/stop") => {
                 request.respond(Response::empty(200))?;

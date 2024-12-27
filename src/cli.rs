@@ -43,7 +43,7 @@ impl CliOptions {
             self.port.map(NonZeroU16::get).unwrap_or(0),
         );
         let server = Server::http(addr).unwrap();
-        log::warn!("Listening on server: {}", server.server_addr());
+        log::info!("Listening on server: {}", server.server_addr());
 
         let port = match server.server_addr().to_ip() {
             Some(ip) => ip.port(),
