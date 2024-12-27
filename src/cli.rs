@@ -1,7 +1,6 @@
 use std::{env::temp_dir, net::Ipv4Addr, num::NonZeroU16, path::PathBuf, str::FromStr};
 
 use clap::{builder::PossibleValue, ColorChoice, Parser, ValueEnum};
-use env_logger::fmt;
 use tiny_http::Server;
 use uuid::Uuid;
 

@@ -1,7 +1,7 @@
 use std::{fmt::Write, path::Path};
 
 use rbx_dom_weak::{
-    types::{Attributes, Enum, Variant},
+    types::{Attributes, Variant},
     InstanceBuilder, WeakDom,
 };
 use uuid::Uuid;
