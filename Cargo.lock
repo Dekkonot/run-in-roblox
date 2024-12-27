@@ -529,20 +529,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rbx_xml"
-version = "0.13.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b14b3027bc9ccd82e2fc854c8bcd25ed58318e570c355bf2cf63df9cdbd5ba8"
-dependencies = [
- "base64",
- "log",
- "rbx_dom_weak",
- "rbx_reflection",
- "rbx_reflection_database",
- "xml-rs",
-]
-
-[[package]]
 name = "redox_users"
 version = "0.4.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -593,7 +579,6 @@ dependencies = [
  "owo-colors",
  "rbx_binary",
  "rbx_dom_weak",
- "rbx_xml",
  "regex",
  "roblox_install",
  "thiserror 2.0.9",
@@ -887,12 +872,6 @@ checksum = "b2986deb581c4fe11b621998a5e53361efe6b48a151178d0cd9eeffa4dc6acc9"
 dependencies = [
  "winapi",
 ]
-
-[[package]]
-name = "xml-rs"
-version = "0.8.24"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea8b391c9a790b496184c29f7f93b9ed5b16abb306c05415b68bcc16e4d06432"
 
 [[package]]
 name = "zerocopy"

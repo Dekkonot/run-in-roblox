@@ -7,7 +7,6 @@ publish = false
 [dependencies]
 rbx_binary = "0.7.7"
 rbx_dom_weak = "2.9"
-rbx_xml = "0.13.5"
 roblox_install = "1.0"
 
 regex = "1.11"
