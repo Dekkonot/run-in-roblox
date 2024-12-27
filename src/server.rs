@@ -19,7 +19,7 @@ pub fn process_requests(server: Server, server_id: Uuid) -> Result<Vec<(MessageT
         log::warn!("request: {} {}", request.method(), request.url());
         match (request.method(), request.url()) {
             (Method::Get, "/stop") => {
-                request.respond(Response::empty(StatusCode(200)))?;
+                request.respond(Response::empty(200))?;
                 return Ok(result);
             }
             (Method::Get, "/id") => {
@@ -35,6 +35,8 @@ pub fn process_requests(server: Server, server_id: Uuid) -> Result<Vec<(MessageT
                 let mut text = String::with_capacity(request.body_length().unwrap_or(0));
                 request.as_reader().read_to_string(&mut text)?;
                 result.push((MessageType::Output, text));
+
+                request.respond(Response::empty(200))?;
             }
             (method, url) => {
                 log::error!("unknown request to server: {method} {url}")
