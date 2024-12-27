@@ -17,7 +17,8 @@ pub fn bundle_plugin(path_to_script: &Path, port: u16, id: Uuid) -> Result<()> {
     attributes.insert(PORT_ATTRIBUTE.to_owned(), Variant::Float64(port as f64));
     attributes.insert(ID_ATTRIBUTE.to_string(), Variant::String(id.to_string()));
 
-    let script_contents = fs_err::read_to_string(path_to_script)?;
+    let mut script_contents = fs_err::read_to_string(path_to_script)?;
+    script_to_module(&mut script_contents);
 
     let root = InstanceBuilder::new("Script")
         .with_name("run-in-roblox")
@@ -37,4 +38,8 @@ pub fn bundle_plugin(path_to_script: &Path, port: u16, id: Uuid) -> Result<()> {
     rbx_binary::to_writer(&mut vector, &dom, &[dom.root_ref()])?;
 
     roblox::install_plugin(&vector)
+}
+
+fn script_to_module(script: &mut String) {
+    script.push_str("return function() end")
 }
