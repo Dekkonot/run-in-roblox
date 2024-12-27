@@ -38,8 +38,18 @@ pub struct CliOptions {
 impl CliOptions {
     pub fn run(self) -> Result<Vec<(MessageType, String)>> {
         let kind = ScriptKind::Plugin;
-        let port = self.port.map(NonZeroU16::get).unwrap_or(0);
 
+        let addr = (
+            Ipv4Addr::from([127, 0, 0, 1]),
+            self.port.map(NonZeroU16::get).unwrap_or(0),
+        );
+        let server = Server::http(addr).unwrap();
+        log::warn!("Listening on server: {}", server.server_addr());
+
+        let port = match server.server_addr().to_ip() {
+            Some(ip) => ip.port(),
+            None => server.server_addr().to_unix().unwrap().port(),
+        };
         let server_id = Uuid::new_v4();
 
         log::debug!("Bundling script as {kind:?}");
@@ -49,10 +59,6 @@ impl CliOptions {
             }
             _ => unimplemented!("script kind {kind:?} not supported yet"),
         }
-
-        let addr = (Ipv4Addr::from([0, 0, 0, 0]), port);
-        let server = Server::http(addr).unwrap();
-        log::warn!("Listening on server: {}", server.server_addr());
 
         let place = match self.place {
             Some(place) => place,
