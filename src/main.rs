@@ -2,7 +2,7 @@ use clap::{ColorChoice, Parser};
 
 use env_logger::WriteStyle;
 use owo_colors::{OwoColorize, Stream};
-use rir::{cli::CliOptions, server::MessageType};
+use run_in_roblox::{cli::CliOptions, server::MessageType};
 
 fn main() {
     let cli = CliOptions::parse();
