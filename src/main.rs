@@ -1,15 +1,36 @@
-use clap::Parser;
+use clap::{ColorChoice, Parser};
 
-use rir::cli::{color_to_write_style, CliOptions};
+use env_logger::WriteStyle;
+use owo_colors::OwoColorize;
+use rir::{cli::CliOptions, server::MessageType};
 
 fn main() {
     let cli = CliOptions::parse();
+    let write_style = match cli.color {
+        ColorChoice::Auto => WriteStyle::Auto,
+        ColorChoice::Always => {
+            owo_colors::set_override(true);
+            WriteStyle::Always
+        }
+        ColorChoice::Never => {
+            owo_colors::set_override(false);
+            WriteStyle::Never
+        }
+    };
 
     env_logger::Builder::from_env(env_logger::Env::default())
         .format_timestamp(None)
         .format_indent(Some(8))
-        .write_style(color_to_write_style(cli.color))
+        .write_style(write_style)
         .init();
 
-    let _ = cli.run().unwrap();
+    let result = cli.run().unwrap();
+    for (message_type, message) in result {
+        match message_type {
+            MessageType::Info => println!("{}", message.cyan()),
+            MessageType::Output => println!("{}", message.default_color()),
+            MessageType::Warn => println!("{}", message.yellow()),
+            MessageType::Error => println!("{}", message.red()),
+        }
+    }
 }

@@ -114,11 +114,3 @@ impl ValueEnum for ScriptKind {
         })
     }
 }
-
-pub fn color_to_write_style(color: ColorChoice) -> fmt::WriteStyle {
-    match color {
-        ColorChoice::Auto => fmt::WriteStyle::Auto,
-        ColorChoice::Always => fmt::WriteStyle::Always,
-        ColorChoice::Never => fmt::WriteStyle::Never,
-    }
-}
