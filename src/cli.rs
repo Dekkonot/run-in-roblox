@@ -1,9 +1,15 @@
-use std::{num::NonZeroU16, path::PathBuf, str::FromStr};
+use std::{env::temp_dir, net::Ipv4Addr, num::NonZeroU16, path::PathBuf, str::FromStr};
 
 use clap::{builder::PossibleValue, ColorChoice, Parser, ValueEnum};
 use env_logger::fmt;
+use tiny_http::Server;
+use uuid::Uuid;
 
-use crate::Error;
+use crate::{
+    injection, roblox,
+    server::{process_requests, MessageType},
+    Error, Result,
+};
 
 #[derive(Debug, Parser)]
 pub struct CliOptions {
@@ -29,6 +35,47 @@ pub struct CliOptions {
     pub color: ColorChoice,
 }
 
+impl CliOptions {
+    pub fn run(self) -> Result<Vec<(MessageType, String)>> {
+        let kind = ScriptKind::Plugin;
+        let port = self.port.map(NonZeroU16::get).unwrap_or(0);
+
+        let server_id = Uuid::new_v4();
+
+        log::debug!("Bundling script as {kind:?}");
+        match kind {
+            ScriptKind::Plugin => {
+                injection::bundle_plugin(&self.script, port, server_id)?;
+            }
+            _ => unimplemented!("script kind {kind:?} not supported yet"),
+        }
+
+        let addr = (Ipv4Addr::from([0, 0, 0, 0]), port);
+        let server = Server::http(addr).unwrap();
+        log::warn!("Listening on server: {}", server.server_addr());
+
+        let place = match self.place {
+            Some(place) => place,
+            None => {
+                let path = temp_dir().join("run-in-roblox-empty.rbxl");
+                roblox::create_empty_place(&path)?;
+                path
+            }
+        };
+
+        let child = match kind {
+            ScriptKind::Plugin => roblox::launch_studio_edit(&place)?,
+            _ => unimplemented!("script kind {kind:?} not supported yet"),
+        };
+
+        let requests = process_requests(server, server_id)?;
+
+        drop(child);
+
+        Ok(requests)
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum ScriptKind {
     Server,
@@ -38,7 +85,7 @@ pub enum ScriptKind {
 
 impl FromStr for ScriptKind {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self> {
         match s {
             "server" => Ok(Self::Server),
             "client" => Ok(Self::Client),
