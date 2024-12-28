@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::{
     injection, roblox,
     server::{process_requests, MessageType},
-    Error, Result,
+    Error, Result, DEFAULT_PORT,
 };
 
 #[derive(Debug, Parser)]
@@ -20,8 +20,8 @@ pub struct CliOptions {
     #[clap(long, short)]
     pub place: Option<PathBuf>,
 
-    /// Sets what port the tool's server runs on. If none is provided, it will
-    /// default to one assigned by the system.
+    /// Sets what port the tool's server runs on. If none is provided, this
+    /// will default to 34871.
     #[clap(long)]
     pub port: Option<NonZeroU16>,
 
@@ -38,17 +38,12 @@ impl CliOptions {
     pub fn run(self) -> Result<Vec<(MessageType, String)>> {
         let kind = ScriptKind::Plugin;
 
-        let addr = (
-            Ipv4Addr::from([127, 0, 0, 1]),
-            self.port.map(NonZeroU16::get).unwrap_or(0),
-        );
+        let port = self.port.map(NonZeroU16::get).unwrap_or(DEFAULT_PORT);
+        let addr = (Ipv4Addr::from([127, 0, 0, 1]), port);
+
         let server = Server::http(addr).unwrap();
         log::info!("Listening on server: {}", server.server_addr());
 
-        let port = match server.server_addr().to_ip() {
-            Some(ip) => ip.port(),
-            None => server.server_addr().to_unix().unwrap().port(),
-        };
         let server_id = Uuid::new_v4();
 
         log::debug!("Bundling script as {kind:?}");
