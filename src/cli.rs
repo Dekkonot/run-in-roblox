@@ -6,7 +6,7 @@ use uuid::Uuid;
 
 use crate::{
     injection, roblox,
-    server::{process_requests, MessageType},
+    server::{process_requests, ServerOutput},
     Error, Result, DEFAULT_PORT,
 };
 
@@ -35,7 +35,7 @@ pub struct CliOptions {
 }
 
 impl CliOptions {
-    pub fn run(self) -> Result<Vec<(MessageType, String)>> {
+    pub fn run(self) -> Result<ServerOutput> {
         let kind = ScriptKind::Plugin;
 
         let port = self.port.map(NonZeroU16::get).unwrap_or(DEFAULT_PORT);

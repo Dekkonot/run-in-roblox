@@ -1,10 +1,15 @@
+use std::process::{self, ExitCode};
+
 use clap::{ColorChoice, Parser};
 
 use env_logger::WriteStyle;
 use owo_colors::{OwoColorize, Stream};
-use run_in_roblox::{cli::CliOptions, server::MessageType};
+use run_in_roblox::{
+    cli::CliOptions,
+    server::{MessageType, ServerOutput},
+};
 
-fn main() {
+fn main() -> ExitCode {
     let cli = CliOptions::parse();
     let write_style = match cli.color {
         ColorChoice::Auto => WriteStyle::Auto,
@@ -24,8 +29,8 @@ fn main() {
         .write_style(write_style)
         .init();
 
-    let result = cli.run().unwrap();
-    for (message_type, message) in result {
+    let ServerOutput { messages, success } = cli.run().unwrap();
+    for (message_type, message) in messages {
         match message_type {
             MessageType::Info => println!(
                 "{}",
@@ -44,5 +49,11 @@ fn main() {
                 message.if_supports_color(Stream::Stdout, |text| text.red())
             ),
         }
+    }
+
+    if success {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::FAILURE
     }
 }
