@@ -1,0 +1,9 @@
+{
+    "name": "run-in-roblox",
+    "tree": {
+        "$path": "src/plugin-base.luau",
+        "package": {
+            "$className": "ModuleScript"
+        }
+    }
+}
